@@ -4,8 +4,10 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
+const { sequelize } = require("./models");
 
 const app = express();
+sequelize.sync();
 
 app.use(morgan("dev"));
 app.use(cors());
