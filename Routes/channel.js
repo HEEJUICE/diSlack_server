@@ -1,64 +1,77 @@
 const express = require("express");
-const { Channel, User, Workspace } = require("../models");
-const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const { Channel, Workspace } = require("../models");
+const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
 router.post("/join", isLoggedIn, async (req, res, next) => {
-  const { email, channel_id, code } = req.body;
+  const { channel_id, code } = req.body;
   // 존재하는 workspace 인지
-  const workspace = await Workspace.findOne({ where: { code } });
-  if (!workspace) {
-    return res.status(409).send("Workspace does not exist");
-  }
-  // workspace에 등록된 user인지
-  const users = await workspace.getUsers({ where: { email } });
-  if (!users[0]) {
-    return res.status(409).send("Not a user registered in the workspace");
-  }
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    if (!workspace) {
+      return res.status(409).send("Workspace does not exist");
+    }
+    // workspace에 등록된 user인지
+    const users = await workspace.getUsers({ where: { id: req.user.id } });
+    if (!users[0]) {
+      return res.status(409).send("Not a user registered in the workspace");
+    }
 
-  const user = await User.findOne({ where: { email } });
-  user.addChannels(channel_id);
+    await req.user.addChannels(channel_id);
 
-  res.status(201).send("OK");
+    res.status(201).send("Join OK");
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { email, name, type, code } = req.body;
+  const { name, type, code } = req.body;
 
   // 존재하는 workspace 인지
-  const workspace = await Workspace.findOne({ where: { code } });
-  if (!workspace) {
-    return res.status(409).send("Workspace does not exist");
-  }
-  // workspace에 등록된 user인지
-  const users = await workspace.getUsers({ where: { email } });
-  if (!users[0]) {
-    return res.status(409).send("Not a user registered in the workspace");
-  }
-
-  // channel 중복된 이름이 있는지
-  Channel.findOrCreate({
-    where: { name },
-    defaults: { workspace_id: workspace.id, type },
-  }).then(([channel, created]) => {
-    if (!created) {
-      return res.status(409).send("Channel already exist");
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    if (!workspace) {
+      return res.status(409).send("Workspace does not exist");
     }
-    return res
-      .status(201)
-      .json({ id: channel.id, name: channel.name, type: channel.type });
-  });
+    // workspace에 등록된 user인지
+    const users = await workspace.getUsers({ where: { id: req.user.id } });
+    if (!users[0]) {
+      return res.status(409).send("Not a user registered in the workspace");
+    }
+
+    const channel = await Channel.create({
+      name,
+      workspace_id: workspace.id,
+      type,
+    });
+
+    await channel.addUsers(req.user.id);
+
+    res.status(201).json({ id: channel.id, type: channel.type });
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get("/list", isLoggedIn, async (req, res) => {
+router.get("/list", isLoggedIn, async (req, res, next) => {
   const { code } = req.body;
-  // 존재하는 workspace 인지
-  const workspace = await Workspace.findOne({ where: { code } });
-  if (!workspace) {
-    return res.status(409).send("Workspace does not exist");
+  try {
+    // 존재하는 workspace 인지
+    const workspace = await Workspace.findOne({ where: { code } });
+    if (!workspace) {
+      return res.status(409).send("Workspace does not exist");
+    }
+    let channels = await workspace.getChannels();
+    channels = channels.map(channel => ({
+      id: channel.id,
+      name: channel.name,
+      type: channel.type,
+    }));
+    res.json(channels);
+  } catch (err) {
+    next(err);
   }
-  console.log(await workspace.getChannels());
-  res.send("H");
 });
 module.exports = router;

@@ -1,23 +1,22 @@
 const express = require("express");
 const shortid = require("shortid");
-const bcrypt = require("bcrypt");
-const { Workspace, User } = require("../models");
-const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+const { Workspace, Channel } = require("../models");
+const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { name, user_id } = req.body;
+  const { name } = req.body;
 
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );
   // 중복된 code가 있으면 다시 generate
   let code = shortid.generate();
-  for (let i = 0; i < 9; i += 1) {
+  for (let i = 0; i < 4; i += 1) {
     const result = await Workspace.findOne({ where: { code } });
     if (result) {
-      if (i === 8) {
+      if (i === 3) {
         return next(new Error("Server Error"));
       }
       code = shortid.generate();
@@ -28,31 +27,44 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     where: { name },
     defaults: { code, owner_id: req.user.id },
   })
-    .then(([workSpace, created]) => {
-      if (!created) {
-        return res.sendStatus(409);
+    .then(async ([workSpace, created]) => {
+      try {
+        if (!created) {
+          return res.status(409).send("Already exists workspace name");
+        }
+        await workSpace.addUsers(req.user.id);
+        const channel = await Channel.create({
+          name: "general",
+          workspace_id: workSpace.id,
+        });
+        await channel.addUsers(req.user.id);
+        await workSpace.addChannels(channel.id);
+        res
+          .status(201)
+          .json({ url: `http://${req.headers.host}/${code}`, code });
+      } catch (err) {
+        next(err);
       }
-      return res
-        .status(201)
-        .json({ url: `http://${req.headers.host}/${code}`, code });
     })
     .catch(err => {
       next(err);
     });
 });
 
-router.post("/join", isLoggedIn, async (req, res) => {
+router.post("/join", isLoggedIn, async (req, res, next) => {
   const { code } = req.body;
-  // const workspace = await Workspace.findOne({ where: { id: 1 } });
-  // console.log("WORKD", await workspace.getUsers());
 
-  const workspace = await Workspace.findOne({ where: { code } });
-  if (!workspace) {
-    return res.sendStatus(401);
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    if (!workspace) {
+      return res.status(401).send("잘못된 code");
+    }
+    workspace.addUsers(req.user.id);
+    res.status(201).send("Join OK");
+  } catch (err) {
+    next(err);
   }
-  workspace.addUsers(req.user.id);
-  res.status(201).send("OK");
 });
 
-router.get("/invite", (req, res) => {});
+// router.get("/invite", (req, res) => {});
 module.exports = router;
