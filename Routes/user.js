@@ -58,7 +58,9 @@ router.post("/signin", (req, res, next) => {
   })(req, res, next);
 });
 
-router.post("/signout", (req, res) => {
+router.get("/signout", (req, res) => {
+  console.log(req.user);
+  req.logout();
   req.session.destroy();
   res.sendStatus(201);
 });
