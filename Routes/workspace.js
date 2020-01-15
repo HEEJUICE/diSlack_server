@@ -2,17 +2,18 @@ const express = require("express");
 const shortid = require("shortid");
 const bcrypt = require("bcrypt");
 const { Workspace, User } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.post("/create", async (req, res, next) => {
-  const { name, eamil } = req.body;
+router.post("/create", isLoggedIn, async (req, res, next) => {
+  const { name, user_id } = req.body;
+
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );
-  let code = shortid.generate();
-
   // 중복된 code가 있으면 다시 generate
+  let code = shortid.generate();
   for (let i = 0; i < 9; i += 1) {
     const result = await Workspace.findOne({ where: { code } });
     if (result) {
@@ -25,8 +26,7 @@ router.post("/create", async (req, res, next) => {
 
   Workspace.findOrCreate({
     where: { name },
-    // owner_id:user_id
-    defaults: { code },
+    defaults: { code, owner_id: req.user.id },
   })
     .then(([workSpace, created]) => {
       if (!created) {
@@ -41,23 +41,17 @@ router.post("/create", async (req, res, next) => {
     });
 });
 
-router.post("/join", async (req, res) => {
-  const { email, password, code } = req.body;
+router.post("/join", isLoggedIn, async (req, res) => {
+  const { code } = req.body;
   // const workspace = await Workspace.findOne({ where: { id: 1 } });
   // console.log("WORKD", await workspace.getUsers());
-  const user = await User.findOne({
-    where: { email },
-  });
-  const result = bcrypt.compareSync(password, user.password);
-  if (result) {
-    const wid = await Workspace.findOne({ where: { code } });
-    if (!wid) {
-      return res.sendStatus(401);
-    }
-    const succ = await user.addWorkspaces(wid);
-    return res.sendStatus(201);
+
+  const workspace = await Workspace.findOne({ where: { code } });
+  if (!workspace) {
+    return res.sendStatus(401);
   }
-  return res.sendStatus(401);
+  workspace.addUsers(req.user.id);
+  res.status(201).send("OK");
 });
 
 router.get("/invite", (req, res) => {});

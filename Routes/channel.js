@@ -1,11 +1,11 @@
 const express = require("express");
 const { Channel, User, Workspace } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.post("/join", async (req, res, next) => {
+router.post("/join", isLoggedIn, async (req, res, next) => {
   const { email, channel_id, code } = req.body;
-
   // 존재하는 workspace 인지
   const workspace = await Workspace.findOne({ where: { code } });
   if (!workspace) {
@@ -17,13 +17,13 @@ router.post("/join", async (req, res, next) => {
     return res.status(409).send("Not a user registered in the workspace");
   }
 
-  const user = await User.findOne({ whare: { email } });
+  const user = await User.findOne({ where: { email } });
   user.addChannels(channel_id);
 
   res.status(201).send("OK");
 });
 
-router.post("/create", async (req, res, next) => {
+router.post("/create", isLoggedIn, async (req, res, next) => {
   const { email, name, type, code } = req.body;
 
   // 존재하는 workspace 인지
@@ -51,7 +51,7 @@ router.post("/create", async (req, res, next) => {
   });
 });
 
-router.get("/list", async (req, res) => {
+router.get("/list", isLoggedIn, async (req, res) => {
   const { code } = req.body;
   // 존재하는 workspace 인지
   const workspace = await Workspace.findOne({ where: { code } });

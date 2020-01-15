@@ -2,11 +2,13 @@ const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.post("/signup", (req, res) => {
+router.post("/signup", isNotLoggedIn, (req, res) => {
   const { email, username, password } = req.body;
+  console.log(req.query);
   User.findOrCreate({
     where: {
       email,
@@ -25,7 +27,7 @@ router.post("/signup", (req, res) => {
     .catch(err => console.log(err));
 });
 
-router.post("/signin", (req, res, next) => {
+router.post("/signin", isNotLoggedIn, (req, res, next) => {
   // const { email, password } = req.body;
 
   // User.findOne({
@@ -58,7 +60,7 @@ router.post("/signin", (req, res, next) => {
   })(req, res, next);
 });
 
-router.get("/signout", (req, res) => {
+router.get("/signout", isLoggedIn, (req, res) => {
   console.log(req.user);
   req.logout();
   req.session.destroy();
