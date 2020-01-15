@@ -12,5 +12,8 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
-  "rules": {}
+  "rules": {
+    "import/no-dynamic-require": 0,
+    "no-await-in-loop": 0
+  }
 }
