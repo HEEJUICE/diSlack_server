@@ -64,6 +64,16 @@ db.Channel.hasMany(db.ChannelMessage, {
 db.User.belongsToMany(db.Channel, { through: "Channel_User" });
 db.Channel.belongsToMany(db.User, { through: "Channel_User" });
 
+// Channel >- Workspace
+db.Workspace.hasMany(db.Channel, {
+  foreignKey: "workspace_id",
+  target: "id",
+});
+db.Channel.belongsTo(db.Workspace, {
+  foreignKey: "workspace_id",
+  target: "id",
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
