@@ -40,7 +40,7 @@ app.use("/*", (req, res, next) => {
   });
   const err = new Error("Workspace does not exist.");
   err.status = 404;
-  next(err);
+  next();
 });
 app.use("/channel", channelRouter);
 app.use("/user", userRouter);
