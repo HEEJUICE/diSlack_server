@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const passport = require("passport");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
@@ -10,9 +11,11 @@ const channelRouter = require("./Routes/channel");
 const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
 const messagesRouter = require("./Routes/messages");
+const passportConfig = require("./passport");
 
 const app = express();
 sequelize.sync();
+passportConfig(passport);
 
 app.use(morgan("dev"));
 app.use(cors());
@@ -30,7 +33,8 @@ app.use(
     saveUninitialized: true,
   }),
 );
-
+app.use(passport.initialize());
+app.use(passport.session());
 // Route
 app.use("/*", (req, res, next) => {
   Workspace.findOne({ where: { code: req.params[0] } }).then(result => {
@@ -40,7 +44,7 @@ app.use("/*", (req, res, next) => {
   });
   const err = new Error("Workspace does not exist.");
   err.status = 404;
-  next(err);
+  next();
 });
 app.use("/channel", channelRouter);
 app.use("/user", userRouter);

@@ -6,7 +6,7 @@ const { Workspace, User } = require("../models");
 const router = express.Router();
 
 router.post("/create", async (req, res, next) => {
-  const { name, user_id } = req.body;
+  const { name, eamil } = req.body;
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );
@@ -16,6 +16,9 @@ router.post("/create", async (req, res, next) => {
   for (let i = 0; i < 9; i += 1) {
     const result = await Workspace.findOne({ where: { code } });
     if (result) {
+      if (i === 8) {
+        return next(new Error("Server Error"));
+      }
       code = shortid.generate();
     }
   }
@@ -31,12 +34,13 @@ router.post("/create", async (req, res, next) => {
       }
       return res
         .status(201)
-        .json({ url: `http://${req.headers.host}/${code}` }, code);
+        .json({ url: `http://${req.headers.host}/${code}`, code });
     })
     .catch(err => {
       next(err);
     });
 });
+
 router.post("/join", async (req, res) => {
   const { email, password, code } = req.body;
   // const workspace = await Workspace.findOne({ where: { id: 1 } });
@@ -51,10 +55,10 @@ router.post("/join", async (req, res) => {
       return res.sendStatus(401);
     }
     const succ = await user.addWorkspaces(wid);
-    res.sendStatus(201);
-  } else {
-    return res.sendStatus(401);
+    return res.sendStatus(201);
   }
+  return res.sendStatus(401);
 });
+
 router.get("/invite", (req, res) => {});
 module.exports = router;
