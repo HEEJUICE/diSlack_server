@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) =>
-  sequelize.define(
+module.exports = (sequelize, DataTypes) => {
+  const directMessage = sequelize.define(
     "directMessage",
     {
       message: {
@@ -13,3 +13,5 @@ module.exports = (sequelize, DataTypes) =>
       paranoid: true,
     },
   );
+  return directMessage;
+};
