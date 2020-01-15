@@ -11,7 +11,7 @@ module.exports = {
   test: {
     username: "root",
     password: null,
-    database: "database_test",
+    database: process.env.DATABASE,
     host: "127.0.0.1",
     dialect: "mysql",
     operatorsAliases: false,
