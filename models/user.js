@@ -1,5 +1,5 @@
-module.exports = (sequelize, DataTypes) => {
-  const user = sequelize.define(
+module.exports = (sequelize, DataTypes) =>
+  sequelize.define(
     "user",
     {
       email: {
@@ -30,5 +30,3 @@ module.exports = (sequelize, DataTypes) => {
       paranoid: true,
     },
   );
-  return user;
-};
