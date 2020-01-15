@@ -29,7 +29,9 @@ router.post("/create", async (req, res, next) => {
       if (!created) {
         return res.sendStatus(409);
       }
-      res.status(201).json({ url: `http://${req.headers.host}/${code}` }, code);
+      return res
+        .status(201)
+        .json({ url: `http://${req.headers.host}/${code}` }, code);
     })
     .catch(err => {
       next(err);

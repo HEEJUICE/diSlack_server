@@ -1,6 +1,6 @@
 const express = require("express");
-const { channelMessage } = require("../models/channelMessage");
-const { directMessage } = require("../models/directMessage");
+const { ChannelMessage } = require("../models");
+const { DirectMessage } = require("../models");
 
 const router = express.Router();
 
