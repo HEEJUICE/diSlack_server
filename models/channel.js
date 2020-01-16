@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) =>
   sequelize.define(
     "channel",
     {
-      name: {
+      channelName: {
         type: DataTypes.STRING(40),
         allowNull: false,
       },

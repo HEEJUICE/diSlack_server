@@ -1,5 +1,5 @@
 const express = require("express");
-const { ChannelMessage, DirectMessage, Channel } = require("../models");
+const { ChannelMessage, DirectMessage, Channel, Room } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
@@ -31,7 +31,7 @@ router.post("/", isLoggedIn, (req, res, next) => {
           from_id: req.user.id,
           channel_id,
         }).then(cm => {
-          res.status(200).send("OK");
+          res.send(cm);
         });
       }
       return res.status(404).send("Channel does not exist");
