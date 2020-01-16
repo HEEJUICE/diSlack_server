@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { name } = req.body;
-
+  console.log(name);
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );

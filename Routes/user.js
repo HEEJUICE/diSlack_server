@@ -13,7 +13,7 @@ router.post("/signup", isNotLoggedIn, (req, res, next) => {
       email,
     },
     defaults: {
-      username: name,
+      name,
       password: bcrypt.hashSync(password, 12),
     },
   })
