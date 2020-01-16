@@ -66,5 +66,24 @@ router.post("/join", isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/list/my", isLoggedIn, async (req, res, next) => {
+  const workspaces = await req.user.getWorkspaces();
+  const result = workspaces.map(workspace => ({
+    id: workspace.id,
+    name: workspace.name,
+    code: workspace.code,
+  }));
+  res.json(result);
+});
+
+router.get("/list/all", isLoggedIn, async (req, res, next) => {
+  const workspaces = await Workspace.findAll();
+  const result = workspaces.map(workspace => ({
+    id: workspace.id,
+    name: workspace.name,
+    code: workspace.code,
+  }));
+  res.json(result);
+});
 // router.get("/invite", (req, res) => {});
 module.exports = router;
