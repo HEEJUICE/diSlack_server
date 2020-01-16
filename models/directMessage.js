@@ -6,6 +6,10 @@ module.exports = (sequelize, DataTypes) =>
         type: DataTypes.STRING(255),
         allowNull: false,
       },
+      reply: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
     },
     {
       timestamps: true,
