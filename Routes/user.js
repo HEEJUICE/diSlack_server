@@ -43,7 +43,7 @@ router.post("/signin", isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
-router.get("/signout", isLoggedIn, (req, res) => {
+router.post("/signout", isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
   res.sendStatus(201);

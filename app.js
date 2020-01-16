@@ -11,45 +11,39 @@ const channelRouter = require("./Routes/channel");
 const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
 const messagesRouter = require("./Routes/messages");
+const indexRouter = require("./Routes");
 const passportConfig = require("./passport");
+const webSocket = require("./socket");
 
 const app = express();
 sequelize.sync();
 passportConfig(passport);
+const sessionMiddleware = session({
+  secret: process.env.COOKIE_SECRET,
+  resave: false,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+  },
+  saveUninitialized: true,
+});
 
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(
-  session({
-    secret: process.env.COOKIE_SECRET,
-    resave: false,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-    },
-    saveUninitialized: true,
-  }),
-);
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+
 // Route
-app.use("/*", (req, res, next) => {
-  Workspace.findOne({ where: { code: req.params[0] } }).then(result => {
-    if (result) {
-      next();
-    }
-  });
-  const err = new Error("Workspace does not exist.");
-  err.status = 404;
-  next();
-});
-app.use("/channel", channelRouter);
-app.use("/user", userRouter);
 app.use("/workspace", workspaceRouter);
-app.use("/messages", messagesRouter);
+app.use("/user", userRouter);
+app.use("/:code", (req, res, next) => {
+  req.code = req.params.code;
+  indexRouter(req, res, next);
+});
 
 // 404
 app.use((req, res, next) => {
@@ -62,6 +56,8 @@ app.use((err, req, res) => {
   res.status(err.status || 500).send("ERROR!");
 });
 
-app.listen(4000, () => {
+const server = app.listen(4000, () => {
   console.log("server listen on 4000");
 });
+
+webSocket(server, app);
