@@ -5,3 +5,4 @@ seeders/
 *.lock
 *.error
 *.http
+*.sql
