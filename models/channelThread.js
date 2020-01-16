@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) =>
   sequelize.define(
-    "thread",
+    "channelThread",
     {
       reply: {
         type: DataTypes.STRING(255),

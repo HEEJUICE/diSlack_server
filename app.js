@@ -11,6 +11,7 @@ const channelRouter = require("./Routes/channel");
 const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
 const messagesRouter = require("./Routes/messages");
+const threadRouter = require("./Routes/thread");
 const indexRouter = require("./Routes");
 const passportConfig = require("./passport");
 const webSocket = require("./socket");

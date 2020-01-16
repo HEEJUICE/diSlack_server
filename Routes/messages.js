@@ -1,9 +1,6 @@
 const express = require("express");
-const { ChannelMessage, DirectMessage, Channel } = require("../models");
-<<<<<<< HEAD
-=======
+const { ChannelMessage, DirectMessage, Channel, Room } = require("../models");
 const { isLoggedIn } = require("./middlewares");
->>>>>>> f00cb77ee1d7a57cbe727a1ed478b6cba1071040
 
 const router = express.Router();
 
@@ -42,61 +39,8 @@ router.post("/", isLoggedIn, (req, res, next) => {
     .catch(err => next(err));
 });
 
-<<<<<<< HEAD
-/* 댓글 작성 */
-// router.post("/channel/thread", (req, res, next) => {
-//   const { reply, user_id, channel_id } = req.body;
-//   console.log(req.body);
-
-//   ChannelMessage.findOne({
-//     where: { id: req.body.id },
-//   })
-//     .then(result => {
-//       if (result) {
-//         ChannelMessage.upsert({
-//           reply,
-//           user_id,
-//         }); /* values: Object, options: Object) */
-//       }
-//     })
-//     .then(replies => {
-//       res.send(replies);
-//     })
-//     .catch(err => next(err));
-// });
-
-// router.get("/channel/thread/:id", (req, res, next) => {
-//     // eslint-disable-next-line camelcase
-//     const channel_id = req.params.id;
-
-//     Channel.findOne({
-//       where: { id: channel_id },
-//     })
-//       .then(result => {
-//         if (!result) {
-//           res.status(404).send("Channel does not exist");
-//         } else {
-//           ChannelMessage.findAll({
-//             where: { channel_id },
-//           })
-//             .then(messages => {
-//               res.json(messages);
-//             })
-//             .catch(err => next(err));
-//         }
-//       })
-//       .catch(err => next(err));
-//   });
-
-// from_id, to_id 같이 dm을 볼 수 있게끔?
-// 댓글
-// /direct/from_id/to_id
-router.get("/direct/:id", (req, res, next) => {
-  const to_id = req.params.id;
-=======
 // router.get("/direct/:id", (req, res, next) => {
 //   const to_id = req.params.id;
->>>>>>> f00cb77ee1d7a57cbe727a1ed478b6cba1071040
 
 //   DirectMessage.findAll({
 //     where: {
