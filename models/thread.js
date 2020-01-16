@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) =>
   sequelize.define(
-    "channelMessage",
+    "thread",
     {
-      message: {
+      reply: {
         type: DataTypes.STRING(255),
         allowNull: false,
       },

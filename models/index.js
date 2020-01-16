@@ -16,6 +16,7 @@ db.Workspace = require("./workspace")(sequelize, Sequelize);
 db.Channel = require("./channel")(sequelize, Sequelize);
 db.DirectMessage = require("./directMessage")(sequelize, Sequelize);
 db.ChannelMessage = require("./channelMessage")(sequelize, Sequelize);
+db.Thread = require("./thread")(sequelize, Sequelize);
 
 // User >-< Workspace
 db.User.belongsToMany(db.Workspace, { through: "Workspace_User" });
@@ -73,6 +74,14 @@ db.Channel.belongsTo(db.Workspace, {
   foreignKey: "workspace_id",
   target: "id",
 });
+
+// ChannelMessages >-< Thread
+db.ChannelMessage.belongsToMany(db.Thread, { through: "Thread_id" });
+db.Thread.belongsToMany(db.ChannelMessage, { through: "Thread_id" });
+
+// DirectMessages >-< Thread
+db.DirectMessage.belongsToMany(db.Thread, { through: "Thread_id" });
+db.Thread.belongsToMany(db.DirectMessage, { through: "Thread_id" });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
