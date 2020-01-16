@@ -31,7 +31,7 @@ router.post("/", isLoggedIn, (req, res, next) => {
           from_id: req.user.id,
           channel_id,
         }).then(cm => {
-          res.status(200).send(cm);
+          res.status(200).send("OK");
         });
       }
       return res.status(404).send("Channel does not exist");
