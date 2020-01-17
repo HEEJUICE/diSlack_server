@@ -28,7 +28,7 @@ const router = express.Router();
 // });
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
-  const { name, type } = req.body;
+  const { name } = req.body;
   const { code } = req;
 
   // 존재하는 workspace 인지
