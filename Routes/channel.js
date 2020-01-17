@@ -46,10 +46,11 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     const channel = await Channel.create({
       name,
       workspace_id: workspace.id,
+      owner_id: req.user.id,
       type: "public",
     });
 
-    //    await channel.addUsers(req.user.id);
+    await channel.addUsers(req.user.id);
 
     res
       .status(201)

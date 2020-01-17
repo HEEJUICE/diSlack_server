@@ -7,10 +7,10 @@ const router = express.Router();
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { name } = req.body;
-  console.log(name);
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );
+
   // 중복된 code가 있으면 다시 generate
   let code = shortid.generate();
   for (let i = 0; i < 4; i += 1) {
@@ -23,6 +23,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     }
   }
 
+  // 워크스페이스를 생성
   Workspace.findOrCreate({
     where: { name },
     defaults: { code, owner_id: req.user.id },
@@ -36,6 +37,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
         const channel = await Channel.create({
           name: "general",
           workspace_id: workSpace.id,
+          owner_id: req.user.id,
         });
         await channel.addUsers(req.user.id);
         await workSpace.addChannels(channel.id);
