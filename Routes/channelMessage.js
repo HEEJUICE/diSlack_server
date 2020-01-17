@@ -1,5 +1,5 @@
 const express = require("express");
-const { ChannelMessage, DirectMessage, Channel, Room } = require("../models");
+const { ChannelMessage, Channel } = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();

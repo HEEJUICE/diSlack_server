@@ -30,11 +30,11 @@ router.post("/", isLoggedIn, (req, res, next) => {
           message,
           user_id: req.user.id,
           room_id,
-        }).then(cm => {
-          res.send(cm);
+        }).then(dm => {
+          res.send(dm);
         });
       }
-      return res.status(404).send("Channel does not exist");
+      return res.status(404).send("Room does not exist");
     })
     .catch(err => next(err));
 });
