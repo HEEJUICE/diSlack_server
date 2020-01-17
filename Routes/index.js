@@ -1,6 +1,7 @@
 const express = require("express");
 const channelRouter = require("./channel");
 const messagesRouter = require("./messages");
+const threadRouter = require("./thread");
 const { isLoggedIn } = require("./middlewares");
 
 const { Workspace } = require("../models");
@@ -26,8 +27,12 @@ router.get("/join", isLoggedIn, async (req, res, next) => {
 });
 
 router.use("/channel", channelRouter);
-router.use("/:id", (req, res, next) => {
+router.use("/message/channel/:id", (req, res, next) => {
   req.channel_id = req.params.id;
+  messagesRouter(req, res, next);
+});
+router.use("/message/direct/:id", (req, res, next) => {
+  req.room_id = req.params.id;
   messagesRouter(req, res, next);
 });
 
