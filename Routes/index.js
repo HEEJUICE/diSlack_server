@@ -7,7 +7,7 @@ const channelThreadRouter = require("./channelThread");
 const directThreadRouter = require("./directThread");
 const { isLoggedIn } = require("./middlewares");
 
-const { Workspace } = require("../models");
+const { Workspace, User } = require("../models");
 
 const router = express.Router();
 
@@ -24,6 +24,36 @@ router.get("/join", isLoggedIn, async (req, res, next) => {
     }
     workspace.addUsers(req.user.id);
     res.status(201).send("Join OK");
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/user/list", async (req, res, next) => {
+  const { code } = req;
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    const users = await workspace.getUsers();
+    const result = users.map(user => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    }));
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/user/profile/:id", async (req, res, next) => {
+  const { id } = req.params;
+  const { code } = req;
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    const users = await workspace.getUsers();
+
+    const [result] = users.filter(user => parseInt(id) === user.id);
+    res.json({ id: result.id, name: result.name, email: result.email });
   } catch (err) {
     next(err);
   }
