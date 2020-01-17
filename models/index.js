@@ -40,11 +40,11 @@ db.Channel.belongsTo(db.Workspace, {
 
 // Workspace -< Room
 db.Workspace.hasMany(db.Room, {
-  foreignKey: "room_id",
+  foreignKey: "workspace_id",
   target: "id",
 });
 db.Room.belongsTo(db.Workspace, {
-  foreignKey: "room_id",
+  foreignKey: "workspace_id",
   target: "id",
 });
 
