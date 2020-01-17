@@ -3,11 +3,12 @@ module.exports = (sequelize, DataTypes) =>
     "directThread",
     {
       reply: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.TEXT(),
         allowNull: false,
       },
     },
     {
+      charset: "utf8",
       timestamps: true,
       paranoid: true,
     },
