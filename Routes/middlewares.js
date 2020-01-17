@@ -10,6 +10,6 @@ exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     next();
   } else {
-    res.status(403).send();
+    res.status(403).send("로그인 되어 있음");
   }
 };

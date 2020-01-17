@@ -7,13 +7,13 @@ const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 const router = express.Router();
 
 router.post("/signup", isNotLoggedIn, (req, res, next) => {
-  const { email, username, password } = req.body;
+  const { email, name, password } = req.body;
   User.findOrCreate({
     where: {
       email,
     },
     defaults: {
-      username,
+      name,
       password: bcrypt.hashSync(password, 12),
     },
   })
@@ -21,7 +21,7 @@ router.post("/signup", isNotLoggedIn, (req, res, next) => {
       if (!created) {
         return res.status(409).send("Already exsits user");
       }
-      return res.status(200).send(result.dataValues);
+      return res.status(201).send(result.dataValues);
     })
     .catch(err => next(err));
 });

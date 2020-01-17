@@ -25,13 +25,17 @@ db.User.belongsToMany(db.Workspace, { through: "Workspace_User" });
 db.Workspace.belongsToMany(db.User, { through: "Workspace_User" });
 
 // Owner(User) -< Workspace
-db.User.hasMany(db.Workspace, { as: "WSOwner", foreignKey: "owner_id" });
-db.Workspace.belongsTo(db.User, { foreignKey: "owner_id" });
+db.User.hasMany(db.Workspace, {
+  as: "WSOwner",
+  foreignKey: "owner_id",
+  source: "id",
+});
+db.Workspace.belongsTo(db.User, { foreignKey: "owner_id", target: "id" });
 
 // Workspace -< Channel
 db.Workspace.hasMany(db.Channel, {
   foreignKey: "workspace_id",
-  target: "id",
+  source: "id",
 });
 db.Channel.belongsTo(db.Workspace, {
   foreignKey: "workspace_id",
@@ -41,7 +45,7 @@ db.Channel.belongsTo(db.Workspace, {
 // Workspace -< Room
 db.Workspace.hasMany(db.Room, {
   foreignKey: "workspace_id",
-  target: "id",
+  source: "id",
 });
 db.Room.belongsTo(db.Workspace, {
   foreignKey: "workspace_id",
@@ -53,8 +57,12 @@ db.User.belongsToMany(db.Channel, { through: "Channel_User" });
 db.Channel.belongsToMany(db.User, { through: "Channel_User" });
 
 // Owner(User) -< Channel
-db.User.hasMany(db.Channel, { as: "ChOwner", foreignKey: "owner_id" });
-db.Channel.belongsTo(db.User, { foreignKey: "owner_id" });
+db.User.hasMany(db.Channel, {
+  as: "ChOwner",
+  foreignKey: "owner_id",
+  source: "id",
+});
+db.Channel.belongsTo(db.User, { foreignKey: "owner_id", target: "id" });
 
 // User >-< Room
 db.User.belongsToMany(db.Room, { through: "Room_User" });
@@ -63,7 +71,7 @@ db.Room.belongsToMany(db.User, { through: "Room_User" });
 // User -< ChannelMessage
 db.User.hasMany(db.ChannelMessage, {
   foreignKey: "user_id",
-  target: "id",
+  source: "id",
 });
 db.ChannelMessage.belongsTo(db.User, {
   foreignKey: "user_id",
@@ -73,7 +81,7 @@ db.ChannelMessage.belongsTo(db.User, {
 // Channel -< ChannelMessage
 db.Channel.hasMany(db.ChannelMessage, {
   foreignKey: "channel_id",
-  target: "id",
+  source: "id",
 });
 db.ChannelMessage.belongsTo(db.Channel, {
   foreignKey: "channel_id",
@@ -83,7 +91,7 @@ db.ChannelMessage.belongsTo(db.Channel, {
 // Room -< directMessage
 db.Room.hasMany(db.DirectMessage, {
   foreignKey: "room_id",
-  target: "id",
+  source: "id",
 });
 db.DirectMessage.belongsTo(db.Room, {
   foreignKey: "room_id",
@@ -93,7 +101,7 @@ db.DirectMessage.belongsTo(db.Room, {
 // User -< directMessage
 db.User.hasMany(db.DirectMessage, {
   foreignKey: "user_id",
-  target: "id",
+  source: "id",
 });
 db.DirectMessage.belongsTo(db.User, {
   foreignKey: "user_id",
@@ -103,7 +111,7 @@ db.DirectMessage.belongsTo(db.User, {
 // ChannelMessages -< ChannelThread
 db.ChannelMessage.hasMany(db.ChannelThread, {
   foreignKey: "cm_id",
-  target: "id",
+  source: "id",
 });
 db.ChannelThread.belongsTo(db.ChannelMessage, {
   foreignKey: "cm_id",
@@ -113,7 +121,7 @@ db.ChannelThread.belongsTo(db.ChannelMessage, {
 // DirectMessages -< DirectThread
 db.DirectMessage.hasMany(db.DirectThread, {
   foreignKey: "dm_id",
-  target: "id",
+  source: "id",
 });
 db.DirectThread.belongsTo(db.DirectMessage, {
   foreignKey: "dm_id",
@@ -123,7 +131,7 @@ db.DirectThread.belongsTo(db.DirectMessage, {
 // User -< ChannelThread
 db.User.hasMany(db.ChannelThread, {
   foreignKey: "user_id",
-  target: "id",
+  source: "id",
 });
 db.ChannelThread.belongsTo(db.User, {
   foreignKey: "user_id",
@@ -133,7 +141,7 @@ db.ChannelThread.belongsTo(db.User, {
 // User -< DirectThread
 db.User.hasMany(db.DirectThread, {
   foreignKey: "user_id",
-  target: "id",
+  source: "id",
 });
 db.DirectThread.belongsTo(db.User, {
   foreignKey: "user_id",
