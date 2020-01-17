@@ -7,11 +7,8 @@ const cors = require("cors");
 require("dotenv").config();
 const { sequelize, Workspace } = require("./models");
 
-const channelRouter = require("./Routes/channel");
 const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
-const messagesRouter = require("./Routes/messages");
-const threadRouter = require("./Routes/thread");
 const indexRouter = require("./Routes");
 const passportConfig = require("./passport");
 const webSocket = require("./socket");
@@ -30,12 +27,7 @@ const sessionMiddleware = session({
 });
 
 app.use(morgan("dev"));
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    credentials: true,
-  }),
-);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

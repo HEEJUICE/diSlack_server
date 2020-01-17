@@ -1,8 +1,10 @@
 const express = require("express");
 const channelRouter = require("./channel");
+const roomRouter = require("./room");
 const channelMessageRouter = require("./channelMessage");
 const directMessageRouter = require("./directMessage");
-const threadRouter = require("./thread");
+const channelThreadRouter = require("./channelThread");
+const directThreadRouter = require("./directThread");
 const { isLoggedIn } = require("./middlewares");
 
 const { Workspace } = require("../models");
