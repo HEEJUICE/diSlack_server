@@ -21,7 +21,7 @@ router.post("/signup", isNotLoggedIn, (req, res, next) => {
       if (!created) {
         return res.status(409).send("Already exsits user");
       }
-      return res.status(201).send(result.dataValues);
+      return res.status(201).json({ id: result.id, name: result.name });
     })
     .catch(err => next(err));
 });
@@ -38,7 +38,7 @@ router.post("/signin", isNotLoggedIn, (req, res, next) => {
       if (loginError) {
         return next(loginError);
       }
-      return res.json({ user_id: user.id });
+      return res.json({ user_id: user.id, name: user.name });
     });
   })(req, res, next);
 });
