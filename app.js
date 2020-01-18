@@ -63,8 +63,6 @@ app.use((err, req, res) => {
   res.status(err.status || 500).send("SERVER ERROR!");
 });
 
-const server = app.listen(4000, () => {
+app.listen(4000, () => {
   console.log("server listen on 4000");
 });
-
-webSocket(server, app);
