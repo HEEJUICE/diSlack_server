@@ -73,6 +73,7 @@ router.post("/", (req, res, next) => {
     .catch(err => next(err));
 });
 
+// /:code/directmessage/:id(room)/:id(message)
 router.use("/:id", (req, res, next) => {
   req.msgId = req.params.id;
   directThread(req, res, next);
