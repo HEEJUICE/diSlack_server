@@ -1,5 +1,6 @@
 const express = require("express");
 const { ChannelMessage, Channel } = require("../models");
+const channelThread = require("./channelThread");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
@@ -63,5 +64,8 @@ router.post("/", isLoggedIn, (req, res, next) => {
 //     res.status(200).send(dm);
 //   });
 // });
-
+router.use("/:id", (req, res, next) => {
+  req.msgId = req.params.id;
+  channelThread(req, res, next);
+});
 module.exports = router;

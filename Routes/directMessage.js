@@ -1,5 +1,6 @@
 const express = require("express");
 const { DirectMessage, Room } = require("../models");
+const directThread = require("./directThread");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
@@ -64,4 +65,8 @@ router.post("/", isLoggedIn, (req, res, next) => {
 //   });
 // });
 
+router.use("/:id", (req, res, next) => {
+  req.msgId = req.params.id;
+  directThread(req, res, next);
+});
 module.exports = router;
