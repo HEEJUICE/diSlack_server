@@ -12,7 +12,7 @@ const userRouter = require("./routes/sign");
 const indexRouter = require("./routes");
 
 const passportConfig = require("./passport");
-const { isLoggedIn } = require("./routes/middlewares");
+const { isLoggedIn } = require("./middlewares/auth");
 
 const app = express();
 sequelize.sync();

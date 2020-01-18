@@ -2,10 +2,10 @@ const express = require("express");
 const { Workspace } = require("../models");
 
 const userRouter = require("./user");
-const channelRouter = require("./channel");
-const roomRouter = require("./room");
-const channelMessageRouter = require("./channelMessage");
-const directMessageRouter = require("./directMessage");
+const channelRouter = require("./channel/channel");
+const roomRouter = require("./direct/room");
+const channelMessageRouter = require("./channel/channelMessage");
+const directMessageRouter = require("./direct/directMessage");
 
 const router = express.Router();
 

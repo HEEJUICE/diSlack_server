@@ -1,5 +1,5 @@
 const express = require("express");
-const { Channel, Workspace } = require("../models");
+const { Channel, Workspace } = require("../../models");
 
 const router = express.Router();
 

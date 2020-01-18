@@ -1,19 +1,19 @@
 const express = require("express");
-const { ChannelMessage, Channel, ChannelThread, User } = require("../models");
+const { DirectMessage, Room, DirectThread, User } = require("../../models");
 
-const channelThread = require("./channelThread");
+const directThread = require("./directThread");
 
 const router = express.Router();
 
-// /:code/channelmessage/:id(channel)/list
+// /:code/directmessage/:id(room)/list
 router.get("/list", (req, res, next) => {
-  const { channel_id } = req;
+  const { room_id } = req;
 
-  ChannelMessage.findAll({
-    where: { channel_id },
+  DirectMessage.findAll({
+    where: { room_id },
     include: [
       {
-        model: ChannelThread,
+        model: DirectThread,
       },
       {
         model: User,
@@ -32,7 +32,7 @@ router.get("/list", (req, res, next) => {
             name: message.user.name,
             email: message.user.email,
           },
-          replyCount: message.channelThreads.length,
+          replyCount: message.directThreads.length,
         };
       });
       res.json(result);
@@ -40,25 +40,25 @@ router.get("/list", (req, res, next) => {
     .catch(err => next(err));
 });
 
-// /:code/channelmessage/:id(channel)
+// /:code/directmessage/:id(room)
 router.post("/", (req, res, next) => {
   const { message } = req.body;
-  const { channel_id } = req;
+  const { room_id } = req;
 
-  Channel.findOne({
-    where: { id: channel_id },
+  Room.findOne({
+    where: { id: room_id },
   })
     .then(result => {
       if (result) {
-        return ChannelMessage.create({
+        return DirectMessage.create({
           message,
           user_id: req.user.id,
-          channel_id,
-        }).then(cm => {
+          room_id,
+        }).then(dm => {
           res.status(201).json({
-            id: cm.id,
-            message: cm.message,
-            createdAt: cm.createdAt,
+            id: dm.id,
+            message: dm.message,
+            createdAt: dm.createdAt,
             user: {
               id: req.user.id,
               email: req.user.email,
@@ -67,15 +67,15 @@ router.post("/", (req, res, next) => {
           });
         });
       }
-      return res.status(409).send("Channel does not exist");
+      return res.status(409).send("Room does not exist");
     })
     .catch(err => next(err));
 });
 
-// /:code/channelmessage/:id(channel)/:id(message)
+// /:code/directmessage/:id(room)/:id(message)
 router.use("/:id", (req, res, next) => {
   req.msgId = req.params.id;
-  channelThread(req, res, next);
+  directThread(req, res, next);
 });
 
 module.exports = router;

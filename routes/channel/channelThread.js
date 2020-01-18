@@ -5,7 +5,7 @@ const {
   Channel,
   ChannelMessage,
   User,
-} = require("../models");
+} = require("../../models");
 
 const router = express.Router();
 

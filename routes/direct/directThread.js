@@ -5,7 +5,7 @@ const {
   DirectThread,
   Room,
   User,
-} = require("../models");
+} = require("../../models");
 
 const router = express.Router();
 
