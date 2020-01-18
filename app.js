@@ -12,7 +12,6 @@ const userRouter = require("./routes/sign");
 const indexRouter = require("./routes");
 
 const passportConfig = require("./passport");
-const webSocket = require("./socket");
 const { isLoggedIn } = require("./routes/middlewares");
 
 const app = express();
