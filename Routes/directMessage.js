@@ -1,5 +1,5 @@
 const express = require("express");
-const { DirectMessage, Room } = require("../models");
+const { DirectMessage, Room, DirectThread, User } = require("../models");
 const directThread = require("./directThread");
 const { isLoggedIn } = require("./middlewares");
 
@@ -11,9 +11,31 @@ router.get("/list", isLoggedIn, (req, res, next) => {
 
   DirectMessage.findAll({
     where: { room_id },
+    include: [
+      {
+        model: DirectThread,
+      },
+      {
+        model: User,
+      },
+    ],
   })
     .then(messages => {
-      res.json(messages);
+      const result = messages.map(message => {
+        return {
+          id: message.id,
+          message: message.message,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+          user: {
+            id: message.user.id,
+            name: message.user.name,
+            email: message.user.email,
+          },
+          replyCount: message.directThreads.length,
+        };
+      });
+      res.json(result);
     })
     .catch(err => next(err));
 });
@@ -32,7 +54,17 @@ router.post("/", isLoggedIn, (req, res, next) => {
           user_id: req.user.id,
           room_id,
         }).then(dm => {
-          res.send(dm);
+          res.json({
+            id: dm.id,
+            message: dm.message,
+            createdAt: dm.createdAt,
+            updatedAt: dm.updatedAt,
+            user: {
+              id: req.user.id,
+              email: req.user.email,
+              name: req.user.name,
+            },
+          });
         });
       }
       return res.status(404).send("Room does not exist");
