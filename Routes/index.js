@@ -52,13 +52,13 @@ router.get("/user/profile/:id", async (req, res, next) => {
     const workspace = await Workspace.findOne({ where: { code } });
     const users = await workspace.getUsers();
 
-    const [result] = users.filter(user => parseInt(id) === user.id);
+    const [result] = users.filter(user => parseInt(id, 10) === user.id);
     res.json({ id: result.id, name: result.name, email: result.email });
   } catch (err) {
     next(err);
   }
 });
-
+router.use("/room", roomRouter);
 router.use("/channel", channelRouter);
 router.use("/message/channel/:id", (req, res, next) => {
   req.channel_id = req.params.id;

@@ -7,11 +7,12 @@ const router = express.Router();
 
 router.post("/create", isLoggedIn, async (req, res, next) => {
   const { name } = req.body;
+
   shortid.characters(
     "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$@",
   );
 
-  // 중복된 code가 있으면 다시 generate
+  // 중복된 워크스페이스 code가 있으면 다시 생성
   let code = shortid.generate();
   for (let i = 0; i < 4; i += 1) {
     const result = await Workspace.findOne({ where: { code } });
@@ -33,6 +34,7 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
         if (!created) {
           return res.status(409).send("Already exists workspace name");
         }
+
         await workSpace.addUsers(req.user.id);
         const channel = await Channel.create({
           name: "general",
@@ -41,7 +43,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
         });
         await channel.addUsers(req.user.id);
         await workSpace.addChannels(channel.id);
-        res
+
+        return res
           .status(201)
           .json({ url: `http://${req.headers.host}/${code}`, code });
       } catch (err) {
@@ -62,30 +65,39 @@ router.post("/join", isLoggedIn, async (req, res, next) => {
       return res.status(401).send("잘못된 code");
     }
     workspace.addUsers(req.user.id);
-    res.status(200).send("Join OK");
+
+    return res.status(200).send("Join OK");
   } catch (err) {
     next(err);
   }
 });
 
 router.get("/list/my", isLoggedIn, async (req, res, next) => {
-  const workspaces = await req.user.getWorkspaces();
-  const result = workspaces.map(workspace => ({
-    id: workspace.id,
-    name: workspace.name,
-    code: workspace.code,
-  }));
-  res.json(result);
+  try {
+    const workspaces = await req.user.getWorkspaces();
+    const result = workspaces.map(workspace => ({
+      id: workspace.id,
+      name: workspace.name,
+      code: workspace.code,
+    }));
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.get("/list/all", isLoggedIn, async (req, res, next) => {
-  const workspaces = await Workspace.findAll();
-  const result = workspaces.map(workspace => ({
-    id: workspace.id,
-    name: workspace.name,
-    code: workspace.code,
-  }));
-  res.json(result);
+  try {
+    const workspaces = await Workspace.findAll();
+    const result = workspaces.map(workspace => ({
+      id: workspace.id,
+      name: workspace.name,
+      code: workspace.code,
+    }));
+    return res.json(result);
+  } catch (err) {
+    next(err);
+  }
 });
-// router.get("/invite", (req, res) => {});
+
 module.exports = router;
