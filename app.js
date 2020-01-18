@@ -5,7 +5,7 @@ const passport = require("passport");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
-const { sequelize, Workspace } = require("./models");
+const { sequelize } = require("./models");
 
 const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
@@ -26,6 +26,7 @@ const sessionMiddleware = session({
   saveUninitialized: true,
 });
 
+// Middlewares
 app.use(morgan("dev"));
 app.use(
   cors({
@@ -40,9 +41,10 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Route
-app.use("/workspace", workspaceRouter);
+// Routes
 app.use("/user", userRouter);
+app.use("/workspace", workspaceRouter);
+
 app.use("/:code", (req, res, next) => {
   req.code = req.params.code;
   indexRouter(req, res, next);
@@ -50,13 +52,14 @@ app.use("/:code", (req, res, next) => {
 
 // 404
 app.use((req, res, next) => {
-  const err = new Error("Not Founded");
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
+
 // Error
 app.use((err, req, res) => {
-  res.status(err.status || 500).send("ERROR!");
+  res.status(err.status || 500).send("SERVER ERROR!");
 });
 
 const server = app.listen(4000, () => {
