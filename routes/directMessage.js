@@ -59,7 +59,6 @@ router.post("/", (req, res, next) => {
             id: dm.id,
             message: dm.message,
             createdAt: dm.createdAt,
-            updatedAt: dm.updatedAt,
             user: {
               id: req.user.id,
               email: req.user.email,

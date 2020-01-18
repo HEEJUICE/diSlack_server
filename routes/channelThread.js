@@ -34,7 +34,7 @@ router.get("/list", async (req, res, next) => {
     }
 
     const lists = await message.getChannelThreads({
-      attributes: ["id", "reply", "createdAt"],
+      attributes: ["id", "reply", "createdAt", "updatedAt"],
       include: [{ model: User, attributes: ["id", "name", "email"] }],
     });
     return res.json(lists);
