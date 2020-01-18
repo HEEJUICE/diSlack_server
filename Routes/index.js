@@ -60,11 +60,11 @@ router.get("/user/profile/:id", async (req, res, next) => {
 });
 
 router.use("/channel", channelRouter);
-router.use("/message/channel/:id", (req, res, next) => {
+router.use("/channelmessage/:id", (req, res, next) => {
   req.channel_id = req.params.id;
   channelMessageRouter(req, res, next);
 });
-router.use("/message/direct/:id", (req, res, next) => {
+router.use("/directmessage/:id", (req, res, next) => {
   req.room_id = req.params.id;
   directMessageRouter(req, res, next);
 });

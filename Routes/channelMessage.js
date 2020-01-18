@@ -28,10 +28,21 @@ router.post("/", isLoggedIn, (req, res, next) => {
       if (result) {
         return ChannelMessage.create({
           message,
-          from_id: req.user.id,
+          user_id: req.user.id,
           channel_id,
         }).then(cm => {
-          res.send(cm);
+          console.log(cm);
+          res.json({
+            id: cm.id,
+            message: cm.message,
+            createdAt: cm.createdAt,
+            updatedAt: cm.updatedAt,
+            user: {
+              id: req.user.id,
+              email: req.user.email,
+              name: req.user.name,
+            },
+          });
         });
       }
       return res.status(404).send("Channel does not exist");
