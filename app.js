@@ -7,11 +7,13 @@ const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
 
-const userRouter = require("./Routes/user");
 const workspaceRouter = require("./Routes/workspace");
+const userRouter = require("./Routes/sign");
 const indexRouter = require("./Routes");
+
 const passportConfig = require("./passport");
 const webSocket = require("./socket");
+const { isLoggedIn } = require("./Routes/middlewares");
 
 const app = express();
 sequelize.sync();
@@ -43,9 +45,9 @@ app.use(passport.session());
 
 // Routes
 app.use("/user", userRouter);
-app.use("/workspace", workspaceRouter);
+app.use("/workspace", isLoggedIn, workspaceRouter);
 
-app.use("/:code", (req, res, next) => {
+app.use("/:code", isLoggedIn, (req, res, next) => {
   req.code = req.params.code;
   indexRouter(req, res, next);
 });

@@ -1,12 +1,12 @@
 const express = require("express");
 const passport = require("passport");
 const bcrypt = require("bcrypt");
-
 const { User } = require("../models");
 const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+// /user/signup
 router.post("/signup", isNotLoggedIn, (req, res, next) => {
   const { email, name, password } = req.body;
 
@@ -31,6 +31,7 @@ router.post("/signup", isNotLoggedIn, (req, res, next) => {
     .catch(err => next(err));
 });
 
+// /user/signin
 router.post("/signin", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (authError, user, info) => {
     if (authError) {
@@ -49,6 +50,7 @@ router.post("/signin", isNotLoggedIn, (req, res, next) => {
   })(req, res, next);
 });
 
+// /user/signout
 router.post("/signout", isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();

@@ -1,10 +1,10 @@
 const express = require("express");
-const { Room, Workspace, User, Sequelize } = require("../models");
-const { isLoggedIn } = require("./middlewares");
+const { Room, Workspace, User } = require("../models");
 
 const router = express.Router();
 
-router.post("/create", isLoggedIn, async (req, res, next) => {
+// /:code(workspace)/room/create
+router.post("/create", async (req, res, next) => {
   const { friend_id } = req.body;
   const { code } = req;
   try {
@@ -59,7 +59,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/list", isLoggedIn, async (req, res, next) => {
+// /:code(workspace)/room/list
+router.get("/list", async (req, res, next) => {
   const { code } = req;
 
   try {
