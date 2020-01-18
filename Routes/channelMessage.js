@@ -1,5 +1,5 @@
 const express = require("express");
-const { ChannelMessage, Channel } = require("../models");
+const { ChannelMessage, Channel, ChannelThread, User } = require("../models");
 const channelThread = require("./channelThread");
 const { isLoggedIn } = require("./middlewares");
 
@@ -11,9 +11,32 @@ router.get("/list", isLoggedIn, (req, res, next) => {
 
   ChannelMessage.findAll({
     where: { channel_id },
+    include: [
+      {
+        model: ChannelThread,
+      },
+      {
+        model: User,
+      },
+    ],
   })
     .then(messages => {
-      res.json(messages);
+      const result = messages.map(message => {
+        console.log(message);
+        return {
+          id: message.id,
+          message: message.message,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+          user: {
+            id: message.user.id,
+            name: message.user.name,
+            email: message.user.email,
+          },
+          replyCount: message.channelThreads.length,
+        };
+      });
+      res.json(result);
     })
     .catch(err => next(err));
 });
