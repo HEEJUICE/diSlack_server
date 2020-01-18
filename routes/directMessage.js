@@ -55,7 +55,7 @@ router.post("/", (req, res, next) => {
           user_id: req.user.id,
           room_id,
         }).then(dm => {
-          res.json({
+          res.status(201).json({
             id: dm.id,
             message: dm.message,
             createdAt: dm.createdAt,
@@ -68,7 +68,7 @@ router.post("/", (req, res, next) => {
           });
         });
       }
-      return res.status(404).send("Room does not exist");
+      return res.status(409).send("Room does not exist");
     })
     .catch(err => next(err));
 });

@@ -55,7 +55,7 @@ router.post("/", (req, res, next) => {
           user_id: req.user.id,
           channel_id,
         }).then(cm => {
-          res.json({
+          res.status(201).json({
             id: cm.id,
             message: cm.message,
             createdAt: cm.createdAt,
@@ -68,7 +68,7 @@ router.post("/", (req, res, next) => {
           });
         });
       }
-      return res.status(404).send("Channel does not exist");
+      return res.status(409).send("Channel does not exist");
     })
     .catch(err => next(err));
 });
