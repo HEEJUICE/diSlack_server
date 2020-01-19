@@ -5,15 +5,14 @@ const {
   DirectThread,
   Room,
   User,
-} = require("../models");
-const { isLoggedIn } = require("./middlewares");
+} = require("../../models");
 
 const router = express.Router();
 
-// /:code(workspace)/message/direct/:id(room)/:id(message)/list
-router.get("/list", isLoggedIn, async (req, res, next) => {
+// /:code/directmessage/:id(room)/:id(message)/list
+router.get("/list", async (req, res, next) => {
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
-  const { code, room_id, msgId, user } = req;
+  const { code, room_id, msgId } = req;
 
   // DB에서 데이터를 찾는다
   try {
@@ -35,7 +34,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
     }
 
     const lists = await message.getDirectThreads({
-      attributes: ["id", "reply", "createdAt"],
+      attributes: ["id", "reply", "createdAt", "updatedAt"],
       include: [{ model: User, attributes: ["id", "name", "email"] }],
     });
     return res.json(lists);
@@ -44,8 +43,8 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// /:code(workspace)/message/direct/:id(room)/:id(message)
-router.post("/", isLoggedIn, async (req, res, next) => {
+// /:code/directmessage/:id(room)/:id(message)
+router.post("/", async (req, res, next) => {
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
   const { code, room_id, msgId, user } = req;
   const { reply } = req.body;

@@ -1,11 +1,11 @@
 const express = require("express");
 const shortid = require("shortid");
-const { Workspace, Channel } = require("../models");
-const { isLoggedIn } = require("./middlewares");
+const { Workspace, Channel } = require("../../models");
 
 const router = express.Router();
 
-router.post("/create", isLoggedIn, async (req, res, next) => {
+// /workspace/create
+router.post("/create", async (req, res, next) => {
   const { name } = req.body;
 
   shortid.characters(
@@ -56,7 +56,8 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
     });
 });
 
-router.post("/join", isLoggedIn, async (req, res, next) => {
+// /workspace/join
+router.post("/join", async (req, res, next) => {
   const { code } = req.body;
 
   try {
@@ -72,7 +73,8 @@ router.post("/join", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/list/my", isLoggedIn, async (req, res, next) => {
+// /workspace/list/my
+router.get("/list/my", async (req, res, next) => {
   try {
     const workspaces = await req.user.getWorkspaces();
     const result = workspaces.map(workspace => ({
@@ -86,7 +88,8 @@ router.get("/list/my", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.get("/list/all", isLoggedIn, async (req, res, next) => {
+// /workspace/list/all
+router.get("/list/all", async (req, res, next) => {
   try {
     const workspaces = await Workspace.findAll();
     const result = workspaces.map(workspace => ({
