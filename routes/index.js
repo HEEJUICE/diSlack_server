@@ -1,28 +1,13 @@
 const express = require("express");
 const { Workspace } = require("../models");
 
-const userRouter = require("./user");
-const channelRouter = require("./channel/channel");
-const roomRouter = require("./direct/room");
+const userRouter = require("./workspace/user");
+const channelRouter = require("./channel");
+const roomRouter = require("./direct");
 const channelMessageRouter = require("./channel/channelMessage");
 const directMessageRouter = require("./direct/directMessage");
 
 const router = express.Router();
-
-// /workspace/join과 중복됨
-router.get("/join", async (req, res, next) => {
-  const { code } = req;
-  try {
-    const workspace = await Workspace.findOne({ where: { code } });
-    if (!workspace) {
-      return res.status(401).send("잘못된 code");
-    }
-    workspace.addUsers(req.user.id);
-    res.status(200).send("Join OK");
-  } catch (err) {
-    next(err);
-  }
-});
 
 // /:code/user
 router.use("/user", userRouter);
@@ -41,6 +26,21 @@ router.use("/channelmessage/:id", (req, res, next) => {
 router.use("/directmessage/:id", (req, res, next) => {
   req.room_id = req.params.id;
   directMessageRouter(req, res, next);
+});
+
+// /workspace/join과 중복됨
+router.get("/join", async (req, res, next) => {
+  const { code } = req;
+  try {
+    const workspace = await Workspace.findOne({ where: { code } });
+    if (!workspace) {
+      return res.status(401).send("잘못된 code");
+    }
+    workspace.addUsers(req.user.id);
+    res.status(200).send("Join OK");
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

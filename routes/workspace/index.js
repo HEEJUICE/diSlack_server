@@ -1,6 +1,6 @@
 const express = require("express");
 const shortid = require("shortid");
-const { Workspace, Channel } = require("../models");
+const { Workspace, Channel } = require("../../models");
 
 const router = express.Router();
 

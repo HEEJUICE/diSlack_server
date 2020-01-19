@@ -7,9 +7,9 @@ const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
 
-const workspaceRouter = require("./routes/workspace");
-const userRouter = require("./routes/sign");
 const indexRouter = require("./routes");
+const authRouter = require("./routes/auth");
+const workspaceRouter = require("./routes/workspace");
 
 const passportConfig = require("./passport");
 const { isLoggedIn } = require("./middlewares/auth");
@@ -43,7 +43,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use("/user", userRouter);
+app.use("/user", authRouter);
 app.use("/workspace", isLoggedIn, workspaceRouter);
 
 app.use("/:code", isLoggedIn, (req, res, next) => {
