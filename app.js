@@ -7,11 +7,12 @@ const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
 
-const userRouter = require("./Routes/user");
-const workspaceRouter = require("./Routes/workspace");
-const indexRouter = require("./Routes");
+const indexRouter = require("./routes");
+const authRouter = require("./routes/auth");
+const workspaceRouter = require("./routes/workspace");
+
 const passportConfig = require("./passport");
-const webSocket = require("./socket");
+const { isLoggedIn } = require("./middlewares/auth");
 
 const app = express();
 sequelize.sync();
@@ -42,10 +43,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use("/user", userRouter);
-app.use("/workspace", workspaceRouter);
+app.use("/user", authRouter);
+app.use("/workspace", isLoggedIn, workspaceRouter);
 
-app.use("/:code", (req, res, next) => {
+app.use("/:code", isLoggedIn, (req, res, next) => {
   req.code = req.params.code;
   indexRouter(req, res, next);
 });
@@ -62,8 +63,6 @@ app.use((err, req, res) => {
   res.status(err.status || 500).send("SERVER ERROR!");
 });
 
-const server = app.listen(4000, () => {
+app.listen(4000, () => {
   console.log("server listen on 4000");
 });
-
-webSocket(server, app);

@@ -1,12 +1,12 @@
 const express = require("express");
-const { DirectMessage, Room, DirectThread, User } = require("../models");
+const { DirectMessage, Room, DirectThread, User } = require("../../models");
+
 const directThread = require("./directThread");
-const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-router.get("/list", isLoggedIn, (req, res, next) => {
-  // eslint-disable-next-line camelcase
+// /:code/directmessage/:id(room)/list
+router.get("/list", (req, res, next) => {
   const { room_id } = req;
 
   DirectMessage.findAll({
@@ -40,7 +40,8 @@ router.get("/list", isLoggedIn, (req, res, next) => {
     .catch(err => next(err));
 });
 
-router.post("/", isLoggedIn, (req, res, next) => {
+// /:code/directmessage/:id(room)
+router.post("/", (req, res, next) => {
   const { message } = req.body;
   const { room_id } = req;
 
@@ -54,11 +55,10 @@ router.post("/", isLoggedIn, (req, res, next) => {
           user_id: req.user.id,
           room_id,
         }).then(dm => {
-          res.json({
+          res.status(201).json({
             id: dm.id,
             message: dm.message,
             createdAt: dm.createdAt,
-            updatedAt: dm.updatedAt,
             user: {
               id: req.user.id,
               email: req.user.email,
@@ -67,38 +67,15 @@ router.post("/", isLoggedIn, (req, res, next) => {
           });
         });
       }
-      return res.status(404).send("Room does not exist");
+      return res.status(409).send("Room does not exist");
     })
     .catch(err => next(err));
 });
 
-// router.get("/direct/:id", (req, res, next) => {
-//   const to_id = req.params.id;
-
-//   DirectMessage.findAll({
-//     where: {
-//       from_id: 1,
-//       to_id,
-//     },
-//   }).then(result => {
-//     res.json(result);
-//   });
-// });
-
-// router.post("/direct", (req, res, next) => {
-//   const { message, from_id, to_id } = req.body;
-
-//   return DirectMessage.create({
-//     message,
-//     from_id,
-//     to_id,
-//   }).then(dm => {
-//     res.status(200).send(dm);
-//   });
-// });
-
+// /:code/directmessage/:id(room)/:id(message)
 router.use("/:id", (req, res, next) => {
   req.msgId = req.params.id;
   directThread(req, res, next);
 });
+
 module.exports = router;
