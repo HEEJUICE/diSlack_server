@@ -10,7 +10,7 @@ const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
-// /:code(workspace)/message/direct/:id(room)/:id(message)/list
+// /:code(workspace)/directmessage/:id(room)/:id(message)/list
 router.get("/list", isLoggedIn, async (req, res, next) => {
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
   const { code, room_id, msgId, user } = req;
@@ -44,7 +44,7 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// /:code(workspace)/message/direct/:id(room)/:id(message)
+// /:code(workspace)/directmessage/:id(room)/:id(message)
 router.post("/", isLoggedIn, async (req, res, next) => {
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
   const { code, room_id, msgId, user } = req;
