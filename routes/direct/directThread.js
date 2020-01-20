@@ -9,13 +9,8 @@ const {
 
 const router = express.Router();
 
-<<<<<<< HEAD:Routes/directThread.js
-// /:code(workspace)/directmessage/:id(room)/:id(message)/list
-router.get("/list", isLoggedIn, async (req, res, next) => {
-=======
 // /:code/directmessage/:id(room)/:id(message)/list
 router.get("/list", async (req, res, next) => {
->>>>>>> bbb4c335b6425b834d46b0398d0e76ae39d4c503:routes/direct/directThread.js
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
   const { code, room_id, msgId } = req;
 
@@ -48,13 +43,8 @@ router.get("/list", async (req, res, next) => {
   }
 });
 
-<<<<<<< HEAD:Routes/directThread.js
-// /:code(workspace)/directmessage/:id(room)/:id(message)
-router.post("/", isLoggedIn, async (req, res, next) => {
-=======
 // /:code/directmessage/:id(room)/:id(message)
 router.post("/", async (req, res, next) => {
->>>>>>> bbb4c335b6425b834d46b0398d0e76ae39d4c503:routes/direct/directThread.js
   // 이전 미들웨어에서 저장한 정보를 변수에 저장한다
   const { code, room_id, msgId, user } = req;
   const { reply } = req.body;
