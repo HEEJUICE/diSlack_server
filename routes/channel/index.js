@@ -51,6 +51,7 @@ router.get("/list", async (req, res, next) => {
       id: channel.id,
       name: channel.name,
       type: channel.type,
+      channel: true,
     }));
     res.json(channels);
   } catch (err) {

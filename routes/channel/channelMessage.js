@@ -60,7 +60,23 @@ router.post("/", (req, res, next) => {
           user_id: req.user.id,
           channel_id,
         }).then(cm => {
-          res.status(201).json({
+          const io = req.app.get("io");
+          io.of("chat")
+            .to(`channel${channel_id}`)
+            .emit(
+              "message",
+              JSON.stringify({
+                id: cm.id,
+                message: cm.message,
+                createdAt: cm.createdAt,
+                user: {
+                  id: req.user.id,
+                  email: req.user.email,
+                  name: req.user.name,
+                },
+              }),
+            );
+          return res.status(201).json({
             id: cm.id,
             message: cm.message,
             createdAt: cm.createdAt,
