@@ -7,6 +7,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { sequelize } = require("./models");
 
+const webSocket = require("./socket");
 const indexRouter = require("./routes");
 const authRouter = require("./routes/auth");
 const workspaceRouter = require("./routes/workspace");
@@ -31,7 +32,11 @@ const sessionMiddleware = session({
 app.use(morgan("dev"));
 app.use(
   cors({
-    origin: ["http://localhost:4000", "http://localhost:3000"],
+    origin: [
+      "http://localhost:4000",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ],
     credentials: true,
   }),
 );
@@ -63,6 +68,8 @@ app.use((err, req, res) => {
   res.status(err.status || 500).send("SERVER ERROR!");
 });
 
-app.listen(4000, () => {
+const server = app.listen(4000, () => {
   console.log("server listen on 4000");
 });
+
+webSocket(server, app, sessionMiddleware);
