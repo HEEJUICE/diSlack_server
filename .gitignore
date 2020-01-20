@@ -6,3 +6,4 @@ seeders/
 *.error
 *.http
 *.sql
+*.html
