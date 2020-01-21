@@ -74,6 +74,19 @@ router.post("/", async (req, res, next) => {
       cm_id: msgId,
     });
 
+    const io = req.app.get("io");
+    io.of("channelThread")
+      .to(`channelThread${msgId}`)
+      .emit(
+        "message",
+        JSON.stringify({
+          id: result.id,
+          reply: result.reply,
+          createdAt: result.createdAt,
+          user: { id: user.id, name: user.name, email: user.email },
+        }),
+      );
+
     return res.status(201).json({
       id: result.id,
       reply: result.reply,
