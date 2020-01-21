@@ -1,6 +1,7 @@
 const express = require("express");
 const { Workspace } = require("../models");
 
+const linkRouter = require("./workspace/link");
 const userRouter = require("./workspace/user");
 const channelRouter = require("./channel");
 const roomRouter = require("./direct");
@@ -8,6 +9,9 @@ const channelMessageRouter = require("./channel/channelMessage");
 const directMessageRouter = require("./direct/directMessage");
 
 const router = express.Router();
+
+// /:code/link
+router.use("/link", linkRouter);
 
 // /:code/user
 router.use("/user", userRouter);
