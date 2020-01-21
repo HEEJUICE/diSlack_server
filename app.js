@@ -13,7 +13,7 @@ const authRouter = require("./routes/auth");
 const workspaceRouter = require("./routes/workspace");
 
 const passportConfig = require("./passport");
-const { isLoggedIn } = require("./middlewares/auth");
+const { isLoggedIn, verifyToken } = require("./middlewares/auth");
 
 const app = express();
 sequelize.sync();
@@ -48,6 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+app.post("/verify", verifyToken);
 app.use("/user", authRouter);
 app.use("/workspace", isLoggedIn, workspaceRouter);
 
