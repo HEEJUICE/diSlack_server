@@ -1,6 +1,7 @@
 const SocketIO = require("socket.io");
 const chatModule = require("./chat");
 const roomModule = require("./room");
+const channelThreadModule = require("./channelThread");
 
 module.exports = (server, app, sessionMiddleware) => {
   const io = SocketIO(server, { path: "/socket.io" });
@@ -8,6 +9,7 @@ module.exports = (server, app, sessionMiddleware) => {
 
   const room = io.of("/room");
   const chat = io.of("/chat");
+  const channelThread = io.of("/channelThread");
 
   io.use((socket, next) => {
     sessionMiddleware(socket.request, socket.request.res, next);
@@ -15,4 +17,5 @@ module.exports = (server, app, sessionMiddleware) => {
 
   chatModule(chat);
   roomModule(room);
+  channelThreadModule(channelThread);
 };
