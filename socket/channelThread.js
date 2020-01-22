@@ -4,5 +4,8 @@ module.exports = channelThread => {
     socket.on("joinChannelThread", data => {
       socket.join(`channelThread${data}`);
     });
+    socket.on("joinDirectThread", data => {
+      socket.join(`directThread${data}`);
+    });
   });
 };

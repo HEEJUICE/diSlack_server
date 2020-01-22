@@ -55,7 +55,23 @@ router.post("/", (req, res, next) => {
           user_id: req.user.id,
           room_id,
         }).then(dm => {
-          res.status(201).json({
+          const io = req.app.get("io");
+          io.of("chat")
+            .to(`direct${room_id}`)
+            .emit(
+              "message",
+              JSON.stringify({
+                id: dm.id,
+                message: dm.message,
+                createdAt: dm.createdAt,
+                user: {
+                  id: req.user.id,
+                  email: req.user.email,
+                  name: req.user.name,
+                },
+              }),
+            );
+          return res.status(201).json({
             id: dm.id,
             message: dm.message,
             createdAt: dm.createdAt,
