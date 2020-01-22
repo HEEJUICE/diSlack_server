@@ -48,10 +48,8 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.set("views", path.join(__dirname, "public"));
-app.set("view engine", "html");
-app.use(express.static(path.join(__dirname, "public")));
-app.use("/img", express.static(path.join(__dirname, "uploads")));
+// app.use(express.static(path.join(__dirname, "public")));
+// app.use("/img", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/user", authRouter);
