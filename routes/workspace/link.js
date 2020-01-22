@@ -15,7 +15,7 @@ router.post("/test", async (req, res, next) => {
   });
 
   const mailOptions = {
-    from: "youremail@gmail.com", // 발송 메일 주소
+    from: "user@gmail.com", // 발송 메일 주소
     to: email, // 수신 메일 주소
     subject: "Slack 초대 메일", // 제목
     text: "http://localhost:3000", // 내용

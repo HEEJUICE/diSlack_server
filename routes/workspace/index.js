@@ -41,7 +41,7 @@ router.post("/create", async (req, res, next) => {
           workspace_id: workSpace.id,
           owner_id: req.user.id,
         });
-        await channel.addUsers(req.user.id);
+        await channel.addUsers(req.user.id); // 다 대 다로 연결하면 가운데 테이블이 생기는데, join method를 이런 식으로... add는 추가 get은 join...
         await workSpace.addChannels(channel.id);
 
         return res

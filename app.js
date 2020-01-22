@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const morgan = require("morgan");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 const { sequelize } = require("./models");
 
@@ -46,6 +47,11 @@ app.use(cookieParser());
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.set("views", path.join(__dirname, "public"));
+app.set("view engine", "html");
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/img", express.static(path.join(__dirname, "uploads")));
 
 // Routes
 app.use("/user", authRouter);
