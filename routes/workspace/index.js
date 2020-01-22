@@ -1,6 +1,6 @@
 const express = require("express");
 const shortid = require("shortid");
-const { Workspace, Channel } = require("../../models");
+const { Workspace, Channel, User } = require("../../models");
 
 const router = express.Router();
 
@@ -25,7 +25,7 @@ router.post("/create", async (req, res, next) => {
   }
 
   // 워크스페이스를 생성
-  Workspace.findOrCreate({
+  return Workspace.findOrCreate({
     where: { name },
     defaults: { code, owner_id: req.user.id },
   })
@@ -48,11 +48,11 @@ router.post("/create", async (req, res, next) => {
           .status(201)
           .json({ url: `http://${req.headers.host}/${code}`, code });
       } catch (err) {
-        next(err);
+        return next(err);
       }
     })
     .catch(err => {
-      next(err);
+      return next(err);
     });
 });
 
@@ -69,7 +69,7 @@ router.post("/join", async (req, res, next) => {
 
     return res.status(200).send("Join OK");
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
@@ -84,22 +84,42 @@ router.get("/list/my", async (req, res, next) => {
     }));
     return res.json(result);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
 // /workspace/list/all
 router.get("/list/all", async (req, res, next) => {
   try {
-    const workspaces = await Workspace.findAll();
-    const result = workspaces.map(workspace => ({
-      id: workspace.id,
-      name: workspace.name,
-      code: workspace.code,
-    }));
+    // 머리가 안돌아감
+    // workspaces LEFT JOIN users
+    const workspaces = await Workspace.findAll({
+      include: [
+        {
+          model: User,
+        },
+      ],
+    });
+
+    // 내가 속하지 않는 채널만 filter and map
+    const result = workspaces
+      .filter(cur => {
+        for (let i = 0; i < cur.users.length; i += 1) {
+          if (cur.users[i].id === req.user.id) {
+            return false;
+          }
+        }
+        return true;
+      })
+      .map(workspace => ({
+        id: workspace.id,
+        name: workspace.name,
+        code: workspace.code,
+      }));
+
     return res.json(result);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 

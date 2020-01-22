@@ -29,11 +29,11 @@ router.post("/create", async (req, res, next) => {
 
     await channel.addUsers(req.user.id);
 
-    res
+    return res
       .status(201)
       .json({ id: channel.id, name: channel.name, type: channel.type });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
@@ -53,9 +53,9 @@ router.get("/list", async (req, res, next) => {
       type: channel.type,
       channel: true,
     }));
-    res.json(channels);
+    return res.json(channels);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
