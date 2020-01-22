@@ -55,7 +55,7 @@ router.post("/create", async (req, res, next) => {
       ],
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
@@ -80,9 +80,9 @@ router.get("/list", async (req, res, next) => {
     const result = rooms.filter(room => {
       return room.users.map(cur => cur.id).includes(req.user.id);
     });
-    res.json(result);
+    return res.json(result);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 

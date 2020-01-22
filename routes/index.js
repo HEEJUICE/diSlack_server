@@ -43,9 +43,9 @@ router.get("/join", async (req, res, next) => {
       return res.status(401).send("잘못된 code");
     }
     workspace.addUsers(req.user.id);
-    res.status(200).send("Join OK");
+    return res.status(200).send("Join OK");
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 

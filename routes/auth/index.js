@@ -1,5 +1,5 @@
 const express = require("express");
-const passport = require("passport");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User } = require("../../models");
 const { isLoggedIn, isNotLoggedIn } = require("../../middlewares/auth");
@@ -32,28 +32,44 @@ router.post("/signup", isNotLoggedIn, (req, res, next) => {
 });
 
 // /user/signin
-router.post("/signin", isNotLoggedIn, (req, res, next) => {
-  passport.authenticate("local", (authError, user, info) => {
-    if (authError) {
-      return next(authError);
-    }
+router.post("/signin", isNotLoggedIn, async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(409).send(info.message);
+      return res.status(409).send("회원가입 되지 않은 사용자입니다");
+    }
+    const flag = bcrypt.compareSync(password, user.password);
+    if (!flag) {
+      return res.status(409).send("비밀번호가 일치하지 않습니다");
     }
 
-    return req.login(user, loginError => {
-      if (loginError) {
-        return next(loginError);
-      }
-      return res.json({ id: user.id, email: user.email, name: user.name });
+    const token = jwt.sign(
+      {
+        id: user.id,
+        name: user.name,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+        issuer: "Crong",
+      },
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
     });
-  })(req, res, next);
+    return res.json({ id: user.id, name: user.name, email: user.email });
+  } catch (err) {
+    return next(err);
+  }
 });
 
 // /user/signout
 router.post("/signout", isLoggedIn, (req, res) => {
-  req.logout();
-  req.session.destroy();
+  res.clearCookie("token");
   res.sendStatus(205);
 });
 
