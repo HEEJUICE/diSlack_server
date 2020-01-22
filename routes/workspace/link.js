@@ -17,11 +17,7 @@ router.post("/", async (req, res, next) => {
   });
 
   const mailOptions = {
-<<<<<<< HEAD
-    from: "user@gmail.com", // 발송 메일 주소
-=======
     from: process.env.MAIL_USER, // 발송 메일 주소
->>>>>>> 038f752657f4173b21933d1697552ba58ce2838b
     to: email, // 수신 메일 주소
     subject: "Slack Workspace 초대", // 제목
     text: `
