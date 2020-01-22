@@ -9,13 +9,13 @@ router.post("/test", async (req, res, next) => {
   const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "",
-      pass: "",
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
     },
   });
 
   const mailOptions = {
-    from: "youremail@gmail.com", // 발송 메일 주소
+    from: process.env.MAIL_USER, // 발송 메일 주소
     to: email, // 수신 메일 주소
     subject: "Slack 초대 메일", // 제목
     text: "http://localhost:3000", // 내용
