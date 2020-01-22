@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
 const verifyToken = async (req, res, next) => {
-  console.log("verify");
   try {
     req.decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
 

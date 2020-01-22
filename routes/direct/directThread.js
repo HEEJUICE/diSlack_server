@@ -39,7 +39,7 @@ router.get("/list", async (req, res, next) => {
     });
     return res.json(lists);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
@@ -81,7 +81,7 @@ router.post("/", async (req, res, next) => {
       user: { id: user.id, name: user.name, email: user.email },
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
