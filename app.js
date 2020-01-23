@@ -13,6 +13,7 @@ const webSocket = require("./socket"); // websocket
 const indexRouter = require("./routes");
 const authRouter = require("./routes/auth");
 const workspaceRouter = require("./routes/workspace");
+const mapRouter = require("./routes/map");
 
 const { isLoggedIn, verifyToken } = require("./middlewares/auth"); // 인증
 
@@ -61,6 +62,7 @@ app.use("/:code", isLoggedIn, (req, res, next) => {
   req.code = req.params.code;
   indexRouter(req, res, next);
 });
+app.use("/", mapRouter);
 
 // 404
 app.use((req, res, next) => {
