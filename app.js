@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const fileUpload = require("express-fileupload");
 require("dotenv").config();
 
 const logger = require("./logger"); // winston - error log 저장
@@ -37,13 +38,14 @@ if (process.env.NODE_ENV === "production") {
 }
 app.use(
   cors({
-    origin: ["http://localhost:4000", process.env.URL],
+    origin: ["http://localhost:4000", process.env.URL, "http://localhost:3000"],
     credentials: true,
   }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 // app.use(sessionMiddleware);
 
 // app.use(express.static(path.join(__dirname, "public")));

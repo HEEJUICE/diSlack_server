@@ -1,7 +1,6 @@
 const express = require("express");
+const upload = require("../../fileupload");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const AWS = require("aws-sdk");
 const multerS3 = require("multer-s3");
 
@@ -43,51 +42,69 @@ router.get("/profile/:id", async (req, res, next) => {
   }
 });
 
-fs.readdir("uploads", err => {
-  if (err) {
-    console.log("uploads 폴더가 없어 uploads 폴더를 생성합니다.");
-    fs.mkdirSync("uploads");
-  }
+router.post("/profile/img", (req, res, next) => {
+  // FormData의 경우 req로 부터 데이터를 얻을수 없다.
+  // upload 핸들러(multer)를 통해서 데이터를 읽을 수 있다
+
+  upload(req, res, function(err) {
+    if (err instanceof multer.MulterError) {
+      return next(err);
+    } else if (err) {
+      return next(err);
+    }
+    // console.log("원본파일명 : " + req.file.originalname);
+    // console.log("저장파일명 : " + req.file.filename);
+    // console.log("크기 : " + req.file.size);
+    // console.log('경로 : ' + req.file.location) s3 업로드시 업로드 url을 가져옴
+    return res.json({ success: 1 });
+  });
 });
 
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, cb) {
-      cb(null, "uploads/");
-    },
-    filename(req, file, cb) {
-      const ext = path.extname(file.originalname);
-      cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
-    },
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 10MB => 파일용량 바이트 단위
-});
+// fs.readdir("uploads", err => {
+//   if (err) {
+//     console.log("uploads 폴더가 없어 uploads 폴더를 생성합니다.");
+//     fs.mkdirSync("uploads");
+//   }
+// });
 
-// 이미지 업로드를 처리하는 라우터
-// /:code/user/profile
-router.post("/profile", upload.single("profile_img"), (req, res) => {
-  console.log(req.file);
-  res.json({ url: `/profile/${req.file.filename}` });
-});
+// const upload = multer({
+//   storage: multer.diskStorage({
+//     destination(req, file, cb) {
+//       cb(null, "uploads/");
+//     },
+//     filename(req, file, cb) {
+//       const ext = path.extname(file.originalname);
+//       cb(null, path.basename(file.originalname, ext) + Date.now() + ext);
+//     },
+//   }),
+//   limits: { fileSize: 5 * 1024 * 1024 }, // 10MB => 파일용량 바이트 단위
+// });
 
-const upload2 = multer();
+// // 이미지 업로드를 처리하는 라우터
+// // /:code/user/profile
+// router.post("/profile", upload.single("profile_img"), (req, res) => {
+//   console.log(req.file);
+//   res.json({ url: `/profile/${req.file.filename}` });
+// });
 
-router.post("/", upload2.none(), async (req, res, next) => {
-  try {
-    const user = await User.update({
-      where: { id: req.user.id },
-      profile_img: req.body.url,
-    });
-    res
-      .status(201)
-      .json({
-        id: req.user.id,
-        name: req.user.name,
-        profile_img: req.body.url,
-      });
-  } catch (err) {
-    next(err);
-  }
-});
+// const upload2 = multer();
+
+// router.post("/", upload2.none(), async (req, res, next) => {
+//   try {
+//     const user = await User.update({
+//       where: { id: req.user.id },
+//       profile_img: req.body.url,
+//     });
+//     res
+//       .status(201)
+//       .json({
+//         id: req.user.id,
+//         name: req.user.name,
+//         profile_img: req.body.url,
+//       });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 module.exports = router;
