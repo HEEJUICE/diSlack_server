@@ -8,7 +8,7 @@ module.exports = {
     host: "127.0.0.1",
     dialect: "mysql",
     operatorsAliases: 0,
-    logging: false,
+    logging: 0,
   },
   test: {
     username: "root",
@@ -20,10 +20,11 @@ module.exports = {
   },
   production: {
     username: "root",
-    password: null,
-    database: "database_production",
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
     host: "127.0.0.1",
     dialect: "mysql",
-    operatorsAliases: false,
+    operatorsAliases: 0,
+    logging: 0,
   },
 };

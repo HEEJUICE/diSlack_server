@@ -1,33 +1,10 @@
 const express = require("express");
-const { Channel, Workspace } = require("../models");
-const { isLoggedIn } = require("./middlewares");
-const db = require("../models");
+const { Channel, Workspace } = require("../../models");
 
 const router = express.Router();
 
-// router.post("/join", isLoggedIn, async (req, res, next) => {
-//   const { channel_id } = req.body;
-//   // 존재하는 workspace 인지
-//   try {
-//     const workspace = await Workspace.findOne({ where: { code } });
-//     if (!workspace) {
-//       return res.status(409).send("Workspace does not exist");
-//     }
-//     // workspace에 등록된 user인지
-//     const users = await workspace.getUsers({ where: { id: req.user.id } });
-//     if (!users[0]) {
-//       return res.status(409).send("Not a user registered in the workspace");
-//     }
-
-//     await req.user.addChannels(channel_id);
-
-//     res.status(201).send("Join OK");
-//   } catch (err) {
-//     next(err);
-//   }
-// });
-
-router.post("/create", isLoggedIn, async (req, res, next) => {
+// /:code/channel/create
+router.post("/create", async (req, res, next) => {
   const { name } = req.body;
   const { code } = req;
 
@@ -52,15 +29,16 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
 
     await channel.addUsers(req.user.id);
 
-    res
+    return res
       .status(201)
       .json({ id: channel.id, name: channel.name, type: channel.type });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
-router.get("/list", isLoggedIn, async (req, res, next) => {
+// /:code/channel/list
+router.get("/list", async (req, res, next) => {
   const { code } = req;
   try {
     // 존재하는 workspace 인지
@@ -73,10 +51,11 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
       id: channel.id,
       name: channel.name,
       type: channel.type,
+      channel: true,
     }));
-    res.json(channels);
+    return res.json(channels);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 

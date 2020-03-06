@@ -1,10 +1,10 @@
 const express = require("express");
-const { Room, Workspace, User, Sequelize } = require("../models");
-const { isLoggedIn } = require("./middlewares");
+const { Room, Workspace, User } = require("../../models");
 
 const router = express.Router();
 
-router.post("/create", isLoggedIn, async (req, res, next) => {
+// /:code(workspace)/room/create
+router.post("/create", async (req, res, next) => {
   const { friend_id } = req.body;
   const { code } = req;
   try {
@@ -55,11 +55,12 @@ router.post("/create", isLoggedIn, async (req, res, next) => {
       ],
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
-router.get("/list", isLoggedIn, async (req, res, next) => {
+// /:code(workspace)/room/list
+router.get("/list", async (req, res, next) => {
   const { code } = req;
 
   try {
@@ -79,9 +80,9 @@ router.get("/list", isLoggedIn, async (req, res, next) => {
     const result = rooms.filter(room => {
       return room.users.map(cur => cur.id).includes(req.user.id);
     });
-    res.json(result);
+    return res.json(result);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
