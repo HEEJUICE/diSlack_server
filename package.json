@@ -6,11 +6,8 @@
   "author": "<Crong>",
   "license": "MIT",
   "dependencies": {
-<<<<<<< HEAD
     "aws-sdk": "^2.607.0",
-=======
     "@google/maps": "^1.1.0",
->>>>>>> 297f0e839b148cd684806adf017c54a2b3f730f7
     "bcrypt": "^3.0.7",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",

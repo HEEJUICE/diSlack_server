@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const { Workspace } = require("../models");
 
 const linkRouter = require("./workspace/link");
@@ -16,7 +15,6 @@ router.use("/link", linkRouter);
 
 // /:code/user
 router.use("/user", userRouter);
-router.use("/user/profile", express.static(path.join(__dirname, "uploads")));
 
 // /:code/room
 router.use("/room", roomRouter);
